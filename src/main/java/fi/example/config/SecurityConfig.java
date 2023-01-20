@@ -1,5 +1,6 @@
 package fi.example.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,6 +16,7 @@ import java.time.Duration;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@ConditionalOnProperty(name = "example.properties.keycloak.enabled", havingValue = "false", matchIfMissing = true)
 public class SecurityConfig {
 
     @Bean

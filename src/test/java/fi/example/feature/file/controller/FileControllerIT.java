@@ -18,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class FileControllerIT {
             },
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(separator = ScriptUtils.EOF_STATEMENT_SEPARATOR))
-        void shouldAddOnlyUsersWhichAreNotFound() {
+        void shouldAddOnlyUsersWhichAreNotFound() throws URISyntaxException {
             final var dataBefore = this.userInfoRepository.findAll();
 
             final String fileContent = "Given name;Family name;Registration number;"
@@ -133,7 +134,7 @@ public class FileControllerIT {
             },
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(separator = ScriptUtils.EOF_STATEMENT_SEPARATOR))
-        void shouldUpdateUsersWhichAreNotFound() {
+        void shouldUpdateUsersWhichAreNotFound() throws URISyntaxException {
             final var dataBefore = this.userInfoRepository.findAll();
 
             final String fileContent = "Given name;Family name;Registration number;"
@@ -162,9 +163,10 @@ public class FileControllerIT {
 
         private ResponseEntity<?> importCsvString(
             final String fileContent
-        ) throws RestClientException {
+        ) throws RestClientException, URISyntaxException {
 
             final var headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + this.retrieveAccessToken());
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
             final String fileName = "test_csv.csv";
