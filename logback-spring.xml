@@ -1,0 +1,40 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProfile name="default | dev">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <!-- encoders are assigned the type
+                 ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <!-- to show SQL statements -->
+        <!--        <logger name="org.hibernate.SQL" level="DEBUG"/>-->
+        <!-- to show values bind to sql -->
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+        <!-- to show incoming http requests -->
+        <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+            <level value="DEBUG"/>
+        </logger>
+
+        <!-- to show outgoing http requests -->
+        <logger name="org.springframework.web.client.RestTemplate">
+            <level value="DEBUG"/>
+        </logger>
+
+        <logger name="fi.example">
+            <level value="DEBUG"/>
+        </logger>
+    </springProfile>
+
+</configuration>

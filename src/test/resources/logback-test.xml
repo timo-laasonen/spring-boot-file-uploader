@@ -1,0 +1,29 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- to show SQL statements if not using application format_sql -->
+    <!-- <logger name="org.hibernate.SQL" level="DEBUG"/>-->
+    <!-- to show values bind to sql -->
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+    <logger name="org.springframework.security.web.csrf" level="DEBUG" />
+
+    <!-- to show incoming http requests -->
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+        <level value="DEBUG"/>
+    </logger>
+
+    <logger name="fi.example">
+        <level value="DEBUG"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>-->
+    </root>
+</configuration>

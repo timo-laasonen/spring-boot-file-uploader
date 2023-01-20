@@ -1,0 +1,16 @@
+<FindBugsFilter>
+    <!-- Exclude false positives -->
+
+    <!-- Expose internal presentation causes too much false positives -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Priority value="2"/>
+    </Match>
+
+    <!-- Avoid warnings from DTOs as they are mainly generated lombok code -->
+    <Match>
+        <Class name="~.*\.*DTO"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    </Match>
+
+</FindBugsFilter>

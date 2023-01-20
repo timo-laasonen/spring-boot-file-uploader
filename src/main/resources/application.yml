@@ -1,0 +1,37 @@
+spring:
+  flyway:
+    locations:
+      - classpath:db/migration
+      - classpath:db/devdata
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+      hbm2ddl:
+        auto: validate
+
+    properties:
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: UNSPECIFIED
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        globally_quoted_identifiers_skip_column_definitions: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    username: file-uploader-application
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/file-uploader
+
+example:
+  properties:
+    maxFileUploadSize: 512KB

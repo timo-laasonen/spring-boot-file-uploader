@@ -1,0 +1,23 @@
+spring:
+  flyway:
+    locations:
+      - classpath:db/migration
+      - classpath:db/testdata
+
+  jpa:
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+example:
+  properties:
+    maxFileUploadSize: 1KB
