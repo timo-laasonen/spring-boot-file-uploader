@@ -1,0 +1,21 @@
+name: run-build
+description: Runs build without tests
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK 18
+      uses: actions/setup-java@v3.9.0
+      with:
+        java-version: '18'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Restore Maven cache
+      uses: skjolber/maven-cache-github-action@v1.1
+      with:
+        step: restore
+
+    - name: Build
+      shell: bash
+      run: mvn --batch-mode -DskipTests package --file pom.xml

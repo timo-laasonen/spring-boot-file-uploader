@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,6 +47,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             new ApiError(DATA_NOT_FOUND, ex.getMessage()),
             headers,
             HttpStatus.NOT_FOUND,
+            request
+        );
+    }
+
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    public ResponseEntity<Object> handleAccessDeniedException(
+        final AccessDeniedException ex,
+        final WebRequest request
+    ) {
+        final HttpHeaders headers = this.getHeaders(ACCESS_DENIED);
+        return this.handleExceptionInternal(
+            ex,
+            new ApiError(ACCESS_DENIED, ex.getMessage()),
+            headers,
+            HttpStatus.FORBIDDEN,
             request
         );
     }

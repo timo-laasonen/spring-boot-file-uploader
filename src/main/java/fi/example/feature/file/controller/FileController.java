@@ -4,6 +4,7 @@ import fi.example.feature.file.api.FileApi;
 import fi.example.feature.file.service.IFileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ public class FileController implements FileApi {
         this.fileService = fileService;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_admin')")
     @Override
     public ResponseEntity<?> uploadUsersCsv(final MultipartFile file) throws Exception {
         this.fileService.importUsersFromCsvFile(file);

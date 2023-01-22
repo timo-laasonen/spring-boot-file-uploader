@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import fi.example.persistence.userinfo.UserInfo;
 import fi.example.persistence.userinfo.UserInfoRepository;
 import fi.example.test.AbstractSpringTestBase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.util.LinkedMultiValueMap;
@@ -18,7 +21,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +38,24 @@ public class FileControllerIT {
 
         @Autowired
         private UserInfoRepository userInfoRepository;
+        @Autowired
+        private JwtDecoder jwtDecoder;
+
+        private Jwt jwt;
+
+        @BeforeEach
+        public void beforeEach() {
+            jwt = this.mockJwt(
+                this.jwtDecoder,
+                List.of("admin"),
+                "aca777d6-ce43-4ef8-bd44-638e0d8bbdf8"
+            );
+        }
 
         @Test
         void shouldGiveExceptionIfFileEmpty() throws JsonProcessingException {
             final HttpClientErrorException exception = catchThrowableOfType(
-                () -> this.importCsvString(null),
+                () -> this.importCsvString(null, jwt),
                 HttpClientErrorException.class
             );
             assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -52,6 +67,28 @@ public class FileControllerIT {
                 "file.fileEmpty"
             );
 
+        }
+
+        @Test
+        void shouldGiveAccessDeniedErrorIfNotAdminUser() throws JsonProcessingException {
+            jwt = this.mockJwt(
+                this.jwtDecoder,
+                List.of("basicuser"),
+                "aca777d6-ce43-4ef8-bd44-638e0d8bbdf8"
+            );
+
+            final String fileContent = "Given name;Family name;Registration number;"
+                + System.getProperty("line.separator")
+                + "Teppo;Testi;123456;"
+                + System.getProperty("line.separator")
+                + "Test;User;44444444;";
+
+            final HttpClientErrorException exception = catchThrowableOfType(
+                () -> this.importCsvString(fileContent, jwt),
+                HttpClientErrorException.class
+            );
+
+            assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         }
 
         @Test
@@ -67,7 +104,7 @@ public class FileControllerIT {
             }
 
             final HttpClientErrorException exception = catchThrowableOfType(
-                () -> this.importCsvString(fileContent.toString()),
+                () -> this.importCsvString(fileContent.toString(), jwt),
                 HttpClientErrorException.class
             );
 
@@ -95,7 +132,7 @@ public class FileControllerIT {
             },
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(separator = ScriptUtils.EOF_STATEMENT_SEPARATOR))
-        void shouldAddOnlyUsersWhichAreNotFound() throws URISyntaxException {
+        void shouldAddOnlyUsersWhichAreNotFound() {
             final var dataBefore = this.userInfoRepository.findAll();
 
             final String fileContent = "Given name;Family name;Registration number;"
@@ -104,7 +141,7 @@ public class FileControllerIT {
                 + System.getProperty("line.separator")
                 + "Test;User;44444444;";
 
-            final var response = this.importCsvString(fileContent);
+            final var response = this.importCsvString(fileContent, jwt);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
             final var addedUser = this.userInfoRepository.findAll().stream()
@@ -134,7 +171,7 @@ public class FileControllerIT {
             },
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(separator = ScriptUtils.EOF_STATEMENT_SEPARATOR))
-        void shouldUpdateUsersWhichAreNotFound() throws URISyntaxException {
+        void shouldUpdateUsersWhichAreNotFound() {
             final var dataBefore = this.userInfoRepository.findAll();
 
             final String fileContent = "Given name;Family name;Registration number;"
@@ -143,7 +180,7 @@ public class FileControllerIT {
                 + System.getProperty("line.separator")
                 + "Test;User;44444444;";
 
-            final var response = this.importCsvString(fileContent);
+            final var response = this.importCsvString(fileContent, jwt);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
             final var addedUser = this.userInfoRepository.findAll().stream()
@@ -162,11 +199,14 @@ public class FileControllerIT {
         }
 
         private ResponseEntity<?> importCsvString(
-            final String fileContent
-        ) throws RestClientException, URISyntaxException {
+            final String fileContent,
+            final Jwt jwt
+        ) throws RestClientException {
 
             final var headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + this.retrieveAccessToken());
+            headers.set("Authorization", "Bearer " + jwt.getTokenValue());
+            // TODO: Use below if using Keycloak test container
+            // headers.set("Authorization", "Bearer " + this.retrieveAccessToken());
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
             final String fileName = "test_csv.csv";
