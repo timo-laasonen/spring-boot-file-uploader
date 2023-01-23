@@ -1,0 +1,38 @@
+name: trigger-dev-deployment
+description: Triggers deployment to cloud environment
+
+inputs:
+  githubToken:
+    description: token to access Github
+    required: true
+  frontendTag:
+    description: tag for frontend image
+    required: true
+  backendTag:
+    description: tag for backend image
+    required: true
+  environment:
+    description: target environment
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Trigger deployment
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+      shell: bash
+      run: |
+        echo "*** Trigger deployment to `${{ inputs.environment }}` ***"
+        echo "{
+          \"ref\": \"develop\",
+          \"auto_merge\": false,
+          \"environment\": \"${{ inputs.environment }}\",
+          \"description\": \"Automated deployment\",
+          \"payload\": {
+              \"backendImageTag\": \"${{ inputs.backendTag }}\",
+              \"frontendImageTag\": \"${{ inputs.frontendTag }}\"
+            },
+          \"required_contexts\": []
+        }"
+# | gh api repos/${{ github.repository_owner }}/spring-boot-file-uploader-deploy/deployments --input -

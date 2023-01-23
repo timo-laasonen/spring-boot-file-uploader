@@ -1,0 +1,35 @@
+name: update-release-info
+description: Updates version info deploy release
+
+inputs:
+  githubToken:
+    description: token to access Github
+    required: true
+  releaseVersion:
+    description: 'Release number, like 3.0.1-alpha'
+    required: true
+  component:
+    description: 'Either frontend, backend, or deploy'
+    required: true
+  tag:
+    description: 'Tag of subproject, like tag of container image, or git tag'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Edit main release notes
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+        RELEASE_VERSION: v${{ inputs.releaseVersion }}
+        TAG: ${{ inputs.tag }}
+        COMPONENT: ${{ inputs.component }}
+      run: .github/workflows/update-release-info/update_release_info.sh
+
+    - name: Publish if release is ready
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+        RELEASE_VERSION: v${{ inputs.releaseVersion }}
+      run: .github/workflows/update-release-info/publish_release_if_ok.sh

@@ -1,0 +1,83 @@
+name: publish-dev-container-image
+description: Builds and pushes dev container to container registry with unique tag
+
+inputs:
+  githubToken:
+    description: 'Token to access Github'
+    required: true
+  component:
+    description: 'Either frontend or backend'
+    required: true
+
+outputs:
+  imageVersion:
+    description: Version number of container image
+    value: ${{ steps.image.outputs.imageVersion }}
+  imageId:
+    description: Full id of container image containing name and version
+    value: ${{ steps.image.outputs.imageId }}
+  imageName:
+    description: Name of container image
+    value: ${{ steps.image.outputs.imageVersion }}
+  latestTag:
+    description: Used latest tag
+    value: ${{ steps.image.outputs.latestTag }}
+
+runs:
+  using: composite
+  steps:
+    - name: Log in to registry
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+      run: echo "${GITHUB_TOKEN}" | docker login ghcr.io -u $ --password-stdin
+
+    - name: Get the current branch name
+      id: git
+      shell: bash
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+    - name: Build image id
+      id: image
+      shell: bash
+      env:
+        COMPONENT: ${{ inputs.component }}
+        BRANCH_NAME: ${{ steps.git.outputs.branch }}
+      run: |
+        IMAGE_NAME=file-uploader-$COMPONENT
+        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+        # Change all uppercase to lowercase
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+        
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          VERSION=pr-${{ github.event.number }}-${{github.run_number}}-${GITHUB_SHA::6}
+          LATEST_TAG=pr-${{ github.event.number }}-latest
+        else
+          VERSION=$BRANCH_NAME-${{github.run_number}}-${GITHUB_SHA::6}
+          LATEST_TAG=$BRANCH_NAME-latest
+        fi
+        
+        echo "imageName=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+        echo "imageId=${IMAGE_ID}" >> $GITHUB_OUTPUT
+        echo "imageVersion=${VERSION}" >> $GITHUB_OUTPUT
+        echo "latestTag=${LATEST_TAG}" >> $GITHUB_OUTPUT
+
+    - name: Build container
+      shell: bash
+      env:
+        IMAGE_NAME: ${{ steps.image.outputs.imageName }}
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+
+    - name: Push dev container image
+      shell: bash
+      env:
+        IMAGE_NAME: ${{ steps.image.outputs.imageName }}
+        IMAGE_ID: ${{ steps.image.outputs.imageId }}
+        IMAGE_VERSION: ${{ steps.image.outputs.imageVersion }}
+        LATEST_TAG: ${{ steps.image.outputs.latestTag }}
+      run: |
+        docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_VERSION
+        docker push $IMAGE_ID:$IMAGE_VERSION
+        
+        docker tag $IMAGE_NAME $IMAGE_ID:$LATEST_TAG
+        docker push $IMAGE_ID:$LATEST_TAG

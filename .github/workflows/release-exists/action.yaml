@@ -1,0 +1,43 @@
+name: release-exists
+description: Utility to fail if release exists. Validates also release version syntax.
+
+inputs:
+  githubToken:
+    description: token to access Github
+    required: true
+  releaseVersion:
+    description: 'Release number, like 3.0.1-alpha'
+    required: true
+  component:
+    description: 'What components are included for release existence check: backend, frontend, deploy, all'
+    required: true
+    default: all
+  checkExistence:
+    description: 'Whether should check if release exists or not'
+    required: true
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Validate version
+      shell: bash
+      env:
+        RELEASE_VERSION: ${{ inputs.releaseVersion }}
+      run: |
+        # validate version, like 1.2.3-dev
+        rx='^([0-9]+\.){2}(\*|[0-9]+)(-.*)?$'
+        if ! [[ ${RELEASE_VERSION} =~ $rx ]]; then
+        echo "ERROR: Invalid version number format: ${RELEASE_VERSION}"
+          exit 1
+        fi
+
+    - name: Check our release not exists
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+        RELEASE_VERSION: v${{ inputs.releaseVersion }}
+        COMPONENT: ${{ inputs.component }}
+        CHECK_EXISTENCE: ${{ inputs.checkExistence }}
+      run: |
+        .github/workflows/release-exists/release_exists.sh

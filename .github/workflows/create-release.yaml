@@ -1,0 +1,96 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Release number, like 3.0.1-alpha'
+        required: true
+      srcBranch:
+        description: 'Source branch that should merged to destination. This should be typically same branch where from use are using this workflow unless testing PR.'
+        required: true
+      dstBranch:
+        description: 'Destination branch where source branch should be merged. This should be typically `master` unless special situation.'
+        required: true
+
+env:
+  COMPONENT: backend
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ secrets.DEVOPS_TOKEN }}
+  IMAGE_REGISTRY: ghcr.io/timo-laasonen
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run tests
+        uses: ./.github/workflows/run-tests
+
+  create-release:
+    needs: test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate inputs
+        uses: ./.github/workflows/release-exists
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          releaseVersion: ${{ github.event.inputs.releaseVersion }}
+          checkExistence: 'false'
+          component: ${{ env.COMPONENT }}
+
+      - name: Check parent release valid
+        uses: ./.github/workflows/deploy-release-exists
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          releaseVersion: ${{ github.event.inputs.releaseVersion }}
+          component: ${{ env.COMPONENT }}
+
+      - name: Merge
+        uses: ./.github/workflows/checkout-and-merge
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          srcBranch: ${{ github.event.inputs.srcBranch }}
+          dstBranch: ${{ github.event.inputs.dstBranch }}
+
+      # ----- BUILD -----
+
+      - name: Run build
+        uses: ./.github/workflows/run-build
+
+      - name: Create release container image
+        id: container
+        uses: ./.github/workflows/create-release-container-image
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          releaseVersion: ${{ github.event.inputs.releaseVersion }}
+          component: ${{ env.COMPONENT }}
+
+      - name: Push changes to destination branch
+        env:
+          DST_BRANCH: ${{ github.event.inputs.dstBranch }}
+        run: git push origin "$DST_BRANCH"
+
+      - name: Create release
+        uses: ./.github/workflows/publish-release
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          releaseVersion: ${{ github.event.inputs.releaseVersion }}
+          imageVersion: ${{ steps.container.outputs.imageVersion }}
+          component: ${{ env.COMPONENT }}
+          dstBranch: ${{ github.event.inputs.dstBranch }}
+
+      - name: Update main release
+        uses: ./.github/workflows/update-release-info
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          releaseVersion: ${{ github.event.inputs.releaseVersion }}
+          tag: ${{ steps.container.outputs.imageVersion }}
+          component: ${{ env.COMPONENT }}

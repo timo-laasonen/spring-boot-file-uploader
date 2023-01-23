@@ -1,0 +1,58 @@
+name: checkout-and-merge
+description: Merges source branch to target branch and stays in resulting branch
+
+inputs:
+  githubToken:
+    description: 'Token to access Github'
+    required: true
+  srcBranch:
+    description: 'Source branch that should merged to destination.'
+    required: true
+  dstBranch:
+    description: 'Destination branch where source branch should be merged.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create temp directory
+      id: mktemp
+      shell: bash
+      run: |
+        # Composite actions are read from checked out repo and following merge
+        # may change them locally. We want to use scripts from triggered branch.
+        # Differences are not committed to destination branch.
+        
+        TEMP_DIR=$(mktemp -d)
+        echo "dir=$TEMP_DIR" >> $GITHUB_OUTPUT
+
+    # checkout target branch
+    - name: Copy .github actions
+      shell: bash
+      run: cp -r .github ${{ steps.mktemp.outputs.dir }}/.github_running_branch
+
+    - uses: actions/checkout@v3
+      env:
+        SRC_BRANCH: ${{ github.event.inputs.srcBranch }}
+        DST_BRANCH: ${{ github.event.inputs.dstBranch }}
+      with:
+        ref: ${{ github.event.inputs.dstBranch }}
+        # all history is required for merging
+        fetch-depth: 0
+
+    - name: Initialize mandatory git config
+      shell: bash
+      run: |
+        git config user.name "File uploader GitHub Actions"
+        git config user.email noreply@github.com
+
+    - name: Merge
+      shell: bash
+      env:
+        SRC_BRANCH: ${{ github.event.inputs.srcBranch }}
+        DST_BRANCH: ${{ github.event.inputs.dstBranch }}
+      run: git merge -m "Merge branch '$SRC_BRANCH' into $DST_BRANCH" "origin/$SRC_BRANCH"
+
+    - name: Copy .github actions back
+      shell: bash
+      run: cp -r ${{ steps.mktemp.outputs.dir }}/.github_running_branch/* .github

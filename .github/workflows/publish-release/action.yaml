@@ -1,0 +1,37 @@
+name: publish-release
+description: Creates release and updates version info deploy release
+
+inputs:
+  githubToken:
+    description: token to access Github
+    required: true
+  releaseVersion:
+    description: 'Release number, like 3.0.1-alpha'
+    required: true
+  component:
+    description: 'Either frontend, backend, or deploy'
+    required: true
+  imageVersion:
+    description: 'Version of container image'
+    required: true
+  dstBranch:
+    description: "Destination branch where source branch should be merged."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create release
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+        RELEASE_VERSION: v${{ inputs.releaseVersion }}
+        IMAGE_VERSION: ${{ inputs.imageVersion }}
+        COMPONENT: ${{ inputs.component }}
+        DST_BRANCH: ${{ inputs.dstBranch }}
+      run: |
+        echo "*** Creating release for '$RELEASE_VERSION' using tag $IMAGE_VERSION ***"
+        
+        gh release create "$IMAGE_VERSION" \
+          --target "$DST_BRANCH" \
+          -t "$COMPONENT-$RELEASE_VERSION"

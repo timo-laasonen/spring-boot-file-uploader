@@ -1,0 +1,67 @@
+name: push-release-container-image
+description: Pushes release container to container registry with unique tag
+
+inputs:
+  githubToken:
+    description: 'Token to access Github'
+    required: true
+  component:
+    description: 'Either frontend or backend'
+    required: true
+  releaseVersion:
+    description: 'Release number, like 3.0.1-alpha'
+    required: true
+
+outputs:
+  imageVersion:
+    description: Version number of container image
+    value: ${{ steps.image.outputs.imageVersion }}
+  imageId:
+    description: Full id of container image containing name and version
+    value: ${{ steps.image.outputs.imageId }}
+  imageName:
+    description: Name of container image
+    value: ${{ steps.image.outputs.imageName }}
+
+runs:
+  using: composite
+  steps:
+    - name: Log in to registry
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+      run: echo "${GITHUB_TOKEN}" | docker login ghcr.io -u $ --password-stdin
+
+    - name: Build image id
+      id: image
+      shell: bash
+      env:
+        COMPONENT: ${{ inputs.component }}
+        RELEASE_VERSION: ${{ inputs.releaseVersion }}
+      run: |
+        IMAGE_NAME="file-uploader-$(echo "$COMPONENT" | tr '[:upper:]' '[:lower:]')"
+        IMAGE_ID="ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME"
+        # Change all uppercase to lowercase
+        IMAGE_ID="$(echo "$IMAGE_ID" | tr '[:upper:]' '[:lower:]')"
+        VERSION="$RELEASE_VERSION-${{github.run_number}}-${GITHUB_SHA::6}"
+        
+        echo "imageName=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+        echo "imageId=${IMAGE_ID}" >> $GITHUB_OUTPUT
+        echo "imageVersion=${VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Build container
+      shell: bash
+      env:
+        IMAGE_NAME: ${{ steps.image.outputs.imageName }}
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+
+    - name: Push release image
+      shell: bash
+      env:
+        IMAGE_NAME: ${{ steps.image.outputs.imageName }}
+        IMAGE_ID: ${{ steps.image.outputs.imageId }}
+        VERSION: ${{ steps.image.outputs.imageVersion }}
+      run: |
+        docker tag "$IMAGE_NAME" "$IMAGE_ID:$VERSION"
+        docker push "$IMAGE_ID:$VERSION"
+        # Release version doesn't have latest tag to make version explicit

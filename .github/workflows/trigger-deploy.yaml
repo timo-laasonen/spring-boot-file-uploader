@@ -1,0 +1,22 @@
+name: Trigger backend deployment for dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      backendImageTag:
+        description: 'Container tag for backend'
+        required: true
+
+jobs:
+  request-dev-deployment:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Trigger dev deployment
+        uses: ./.github/workflows/trigger-dev-deployment
+        with:
+          githubToken: ${{ secrets.DEVOPS_TOKEN }}
+          frontendTag: develop-latest
+          backendTag: ${{ github.event.inputs.backendImageTag }}
+          environment: dev
