@@ -1,0 +1,22 @@
+spring:
+  flyway:
+    locations:
+      - classpath:db/migration
+      - classpath:db/devdata
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    username: file-uploader-application
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/file-uploader
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/auth/realms/fileupload-api
+

@@ -17,7 +17,7 @@ spring:
           sharedCache:
             mode: UNSPECIFIED
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
         globally_quoted_identifiers_skip_column_definitions: true
@@ -28,17 +28,8 @@ spring:
 
   datasource:
     driverClassName: org.postgresql.Driver
-    username: file-uploader-application
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/file-uploader
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8180/auth/realms/fileupload-api
-
-example:
+file-uploader:
   properties:
     maxFileUploadSize: 512KB
     keycloak:

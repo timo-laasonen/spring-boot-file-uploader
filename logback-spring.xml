@@ -32,7 +32,7 @@
             <level value="DEBUG"/>
         </logger>
 
-        <logger name="fi.example">
+        <logger name="fi.fileuploader">
             <level value="DEBUG"/>
         </logger>
     </springProfile>

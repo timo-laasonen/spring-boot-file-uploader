@@ -18,6 +18,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-example:
+file-uploader:
   properties:
     maxFileUploadSize: 1KB

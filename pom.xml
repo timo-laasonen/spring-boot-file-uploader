@@ -8,7 +8,7 @@
         <version>3.0.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>fi.file-uploader</groupId>
     <artifactId>spring-boot-file-uploader</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-boot-file-uploader</name>
@@ -242,8 +242,8 @@
                 <configuration>
                     <jsonLibrary>jackson2</jsonLibrary>
                     <classPatterns>
-                        <pattern>fi.example.**DTO</pattern>
-                        <pattern>fi.example.**Request</pattern>
+                        <pattern>fi.fileuploader.**DTO</pattern>
+                        <pattern>fi.fileuploader.**Request</pattern>
                     </classPatterns>
                     <outputKind>module</outputKind>
                     <outputFileType>implementationFile</outputFileType>

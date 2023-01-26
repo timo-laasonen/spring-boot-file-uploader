@@ -1,0 +1,14 @@
+# This property file should contain only those values that are common for all
+# cloud environments. If a value can vary between environments its value
+# should be configured outside of file-uploader repo.
+
+spring:
+  flyway:
+    locations:
+      - classpath:db/migration
+
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    # url for datasource in cloud are defined through SPRING_APPLICATION_JSON env variable
+
