@@ -174,26 +174,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(value = {AbstractFileUploadException.class})
-    public ResponseEntity<Object> handleAbstractOmasuuntimaException(
-        final AbstractFileUploadException exception,
-        final WebRequest request
-    ) {
-        final ResponseErrorCode errorCode = exception.getResponseErrorCode();
-        final HttpHeaders headers = this.getHeaders(errorCode);
-        return this.handleExceptionInternal(
-            exception,
-            new ApiError(
-                errorCode,
-                "exception in file upload",
-                List.of(exception.getMessage())
-            ),
-            headers,
-            errorCode.getStatusCode(),
-            request
-        );
-    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
         final MethodArgumentNotValidException ex,

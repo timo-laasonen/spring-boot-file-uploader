@@ -247,7 +247,7 @@
                     </classPatterns>
                     <outputKind>module</outputKind>
                     <outputFileType>implementationFile</outputFileType>
-                    <outputFile>target/typescript-generator/omasuuntimaApiModel.ts</outputFile>
+                    <outputFile>target/typescript-generator/fileUploaderApiModel.ts</outputFile>
 
                 </configuration>
                 <dependencies>

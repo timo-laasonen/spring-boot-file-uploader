@@ -29,7 +29,7 @@ Uses
     # To start dev server locally
     $ ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
     
-    # one can also start application from OmasuuntimaApplication.java by using IDE
+    # one can also start application from FileUploaderApplication.java by using IDE
     # If running from IDE remember to add active profile
 
     # To run test

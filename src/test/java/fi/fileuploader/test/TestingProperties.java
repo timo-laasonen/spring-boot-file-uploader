@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("omasuuntima.test")
+@ConfigurationProperties("fileuploader.test")
 public class TestingProperties {
 
 }
