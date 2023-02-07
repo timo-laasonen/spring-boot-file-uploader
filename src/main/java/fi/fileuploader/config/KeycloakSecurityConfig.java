@@ -32,7 +32,7 @@ public class KeycloakSecurityConfig {
             .and()
             .cors()
             .and()
-            .authorizeHttpRequests(auth -> auth.anyRequest()
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll().anyRequest()
                 .authenticated())
             .oauth2ResourceServer().jwt().jwtAuthenticationConverter(
                 this.getJwtAuthenticationConverter()
