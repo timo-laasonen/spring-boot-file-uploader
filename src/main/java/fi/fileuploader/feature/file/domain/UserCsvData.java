@@ -16,4 +16,7 @@ public class UserCsvData {
 
     @CsvBindByPosition(position = 2)
     private String registrationNumber;
+
+    @CsvBindByPosition(position = 3)
+    private String email;
 }

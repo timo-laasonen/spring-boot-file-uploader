@@ -77,11 +77,11 @@ public class FileControllerIT {
                 "aca777d6-ce43-4ef8-bd44-638e0d8bbdf8"
             );
 
-            final String fileContent = "Given name;Family name;Registration number;"
+            final String fileContent = "Given name;Family name;Registration number;Email;"
                 + System.getProperty("line.separator")
-                + "Teppo;Testi;123456;"
+                + "Teppo;Testi;123456;teppo@test.fi;"
                 + System.getProperty("line.separator")
-                + "Test;User;44444444;";
+                + "Test;User;44444444;test@test.fi;";
 
             final HttpClientErrorException exception = catchThrowableOfType(
                 () -> this.importCsvString(fileContent, jwt),
@@ -94,12 +94,16 @@ public class FileControllerIT {
         @Test
         void shouldGiveValidationErrorIfFileIsTooBig() throws JsonProcessingException {
             StringBuilder fileContent = new StringBuilder(
-                "Given name;Family name;Registration number;"
+                "Given name;Family name;Registration number;Email;"
                     + System.getProperty("line.separator")
             );
 
             for (int i = 0; i < 1000; i++) {
                 fileContent.append("Test;User;")
+                    .append(i)
+                    .append(";test@test")
+                    .append(i)
+                    .append(".fi;")
                     .append(System.getProperty("line.separator"));
             }
 
@@ -135,11 +139,11 @@ public class FileControllerIT {
         void shouldAddOnlyUsersWhichAreNotFound() {
             final var dataBefore = this.userInfoRepository.findAll();
 
-            final String fileContent = "Given name;Family name;Registration number;"
+            final String fileContent = "Given name;Family name;Registration number;Email;"
                 + System.getProperty("line.separator")
-                + "Teppo;Testi;123456;"
+                + "Teppo;Testi;123456;teppo@test.fi;"
                 + System.getProperty("line.separator")
-                + "Test;User;44444444;";
+                + "Test;User;44444444;test@test.fi;";
 
             final var response = this.importCsvString(fileContent, jwt);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -174,11 +178,11 @@ public class FileControllerIT {
         void shouldUpdateUsersWhichAreNotFound() {
             final var dataBefore = this.userInfoRepository.findAll();
 
-            final String fileContent = "Given name;Family name;Registration number;"
+            final String fileContent = "Given name;Family name;Registration number;Email;"
                 + System.getProperty("line.separator")
-                + "Teppo;Testi;123456;"
+                + "Teppo;Testi;123456;teppo@test.fi;"
                 + System.getProperty("line.separator")
-                + "Test;User;44444444;";
+                + "Test;User;44444444;test@test.fi;";
 
             final var response = this.importCsvString(fileContent, jwt);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

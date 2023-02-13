@@ -25,13 +25,15 @@ public class UserInfoServiceImpl implements IUserInfoService {
     public UserInfo createOrUpdateUserInfo(
         final String registrationNumber,
         final String firstName,
-        final String lastName
+        final String lastName,
+        final String email
     ) {
-        final UserInfo userInfo = this.findUserInfoByRegistrationNumber(
-                registrationNumber
+        final UserInfo userInfo = this.findUserInfoByUsername(
+                email
             )
             .orElseGet(() -> {
                 final var newUser = new UserInfo();
+                newUser.setUsername(email);
                 newUser.setRegistrationNumber(registrationNumber);
                 return this.userInfoRepository.save(newUser);
             });
@@ -49,12 +51,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
 
-    private Optional<UserInfo> findUserInfoByRegistrationNumber(
-        final String registrationNumber
+    private Optional<UserInfo> findUserInfoByUsername(
+        final String email
     ) {
         final QUserInfo userInfo = QUserInfo.userInfo;
         return this.userInfoRepository.findOne(
-            userInfo.registrationNumber.eq(registrationNumber)
+            userInfo.username.eq(email)
         );
     }
 }

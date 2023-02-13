@@ -61,7 +61,8 @@ public class FileServiceImpl implements IFileService {
                 final var user = this.userService.createOrUpdateUserInfo(
                     csvModel.getRegistrationNumber(),
                     csvModel.getGivenName(),
-                    csvModel.getFamilyName()
+                    csvModel.getFamilyName(),
+                    csvModel.getEmail()
                 );
 
                 LOG.debug(

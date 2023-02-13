@@ -10,7 +10,8 @@ public interface IUserInfoService {
     UserInfo createOrUpdateUserInfo(
         String registrationNumber,
         String firstName,
-        String lastName
+        String lastName,
+        String email
     );
 
     Page<UserInfo> findUserInfos(
