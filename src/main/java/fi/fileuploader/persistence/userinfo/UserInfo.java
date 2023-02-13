@@ -23,6 +23,9 @@ public class UserInfo extends UUIDEntity {
     @Column(name = "registration_number", nullable = false, unique = true)
     private String registrationNumber;
 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
     @Getter(lazy = true)
     @Transient
     private final String fullName = this.firstName + " " + this.lastName;

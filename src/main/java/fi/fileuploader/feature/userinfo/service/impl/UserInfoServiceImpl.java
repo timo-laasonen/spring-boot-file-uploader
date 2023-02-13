@@ -4,6 +4,8 @@ import fi.fileuploader.feature.userinfo.service.IUserInfoService;
 import fi.fileuploader.persistence.userinfo.QUserInfo;
 import fi.fileuploader.persistence.userinfo.UserInfo;
 import fi.fileuploader.persistence.userinfo.UserInfoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
         userInfo.setLastName(lastName);
 
         return userInfo;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<UserInfo> findUserInfos(final Pageable pageable) {
+        return this.userInfoRepository.findAll(pageable);
     }
 
 
