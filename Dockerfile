@@ -6,7 +6,7 @@ RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM eclipse-temurin:18-jre-alpine
 LABEL org.opencontainers.image.description="omasuuntima backend component"
-WORKDIR /opt/app
+WORKDIR app
 RUN addgroup -S spring && adduser -S spring -G spring
 COPY --from=builder app/dependencies/ ./
 COPY --from=builder app/spring-boot-loader/ ./
