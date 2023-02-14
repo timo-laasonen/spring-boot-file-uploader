@@ -1,5 +1,4 @@
-# syntax=docker/dockerfile:1
-FROM eclipse-temurin:18-jdk-alpine AS builder
+FROM eclipse-temurin:18-jre-alpine AS builder
 WORKDIR app
 ARG JAR_FILE=target/spring-boot-file-uploader-*.jar
 COPY ${JAR_FILE} app.jar
