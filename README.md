@@ -51,6 +51,9 @@ Uses
 
     # To generate DTOs as typescript to target/typescript-generator
     $ ./mvnw typescript-generator:generate
+    
+    # Build docker container
+    $ docker build -t timo-laasonen/spring-boot-file-uploader-backend .
 
 # Authentication
 

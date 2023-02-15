@@ -38,7 +38,7 @@ jobs:
 
 
   deploy-dev:
-    if: github.ref_name == 'develop'
+    if: github.ref_name == 'master'
     runs-on: ubuntu-20.04
     needs: [ build, test ]
     steps:
@@ -49,5 +49,5 @@ jobs:
         with:
           githubToken: ${{ secrets.DEVOPS_TOKEN }}
           environment: dev
-          frontendTag: develop-latest
-          backendTag: develop-latest
+          frontendTag: master-latest
+          backendTag: master-latest
