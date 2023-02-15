@@ -17,7 +17,11 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 
 @Configuration
 @EnableMethodSecurity
-@ConditionalOnProperty(name = "file-uploader.properties.keycloak.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+    name = "file-uploader.properties.keycloak.enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
 public class KeycloakSecurityConfig {
 
     @Bean
@@ -28,8 +32,7 @@ public class KeycloakSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf()
-            .and()
+        http.csrf().disable()
             .cors()
             .and()
             .authorizeHttpRequests(auth -> auth.requestMatchers("/api/health-check").permitAll()

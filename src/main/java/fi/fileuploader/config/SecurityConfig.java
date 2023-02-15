@@ -15,7 +15,11 @@ import java.time.Duration;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ConditionalOnProperty(name = "file-uploader.properties.keycloak.enabled", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(
+    name = "file-uploader.properties.keycloak.enabled",
+    havingValue = "false",
+    matchIfMissing = true
+)
 public class SecurityConfig {
 
     @Bean
@@ -35,8 +39,9 @@ public class SecurityConfig {
                     .maxAgeInSeconds(Duration.ofDays(365).getSeconds())
                     .requestMatcher(AnyRequestMatcher.INSTANCE)
                 )
-                .referrerPolicy(referrer -> referrer
-                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                .referrerPolicy(referrer -> referrer.policy(
+                        ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER
+                    )
                 )
             );
 

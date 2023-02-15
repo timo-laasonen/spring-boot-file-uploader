@@ -28,6 +28,7 @@ public class FileServiceImpl implements IFileService {
         this.userService = userService;
     }
 
+    @SuppressWarnings("PMD:UnnecessaryModifier")
     @Transactional
     @Override
     public void importUsersFromCsvFile(final MultipartFile file) throws IOException {

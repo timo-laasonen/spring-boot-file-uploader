@@ -13,4 +13,19 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
     </Match>
 
+    <!-- CSFR is not needed as API is stateless -->
+    <Match>
+        <Class name="fi.fileuploader.config.SecurityConfig.java"/>
+        <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
+    </Match>
+
+    <Match>
+        <Class name="fi.fileuploader.config.KeycloakSecurityConfig.java"/>
+        <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
+    </Match>
+
+    <Match>
+        <Class name="fi.fileuploader.persistence.userinfo.UserInfo"/>
+        <Bug pattern="JLM_JSR166_UTILCONCURRENT_MONITORENTER"/>
+    </Match>
 </FindBugsFilter>
