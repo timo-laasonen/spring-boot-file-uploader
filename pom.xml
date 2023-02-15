@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fi.file-uploader</groupId>
-    <artifactId>spring-boot-file-uploader</artifactId>
+    <artifactId>spring-boot-file-uploader-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-boot-file-uploader</name>
     <description>spring-boot-file-uploader</description>
