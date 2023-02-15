@@ -1,6 +1,7 @@
 FROM eclipse-temurin:18-jdk-alpine AS builder
 WORKDIR /app
 COPY mvnw .
+COPY lombok.config .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
