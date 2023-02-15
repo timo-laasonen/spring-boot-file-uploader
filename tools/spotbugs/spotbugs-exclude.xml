@@ -15,12 +15,6 @@
 
     <!-- CSFR is not needed as API is stateless -->
     <Match>
-        <Class name="fi.fileuploader.config.SecurityConfig.java"/>
-        <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
-    </Match>
-
-    <Match>
-        <Class name="fi.fileuploader.config.KeycloakSecurityConfig.java"/>
         <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
     </Match>
 
