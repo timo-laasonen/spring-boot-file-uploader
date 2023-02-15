@@ -32,8 +32,10 @@ public class KeycloakSecurityConfig {
             .and()
             .cors()
             .and()
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll().anyRequest()
-                .authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/api/health-check").permitAll()
+                .anyRequest()
+                .authenticated()
+            )
             .oauth2ResourceServer().jwt().jwtAuthenticationConverter(
                 this.getJwtAuthenticationConverter()
             );

@@ -19,7 +19,7 @@ class FileUploaderApplicationIT extends AbstractSpringTestBase {
         final var headers = new HttpHeaders();
 
         final ResponseEntity<String> response = this.testRestTemplate.exchange(
-            this.getBaseUrl() + "/actuator/health",
+            this.getBaseUrl() + "/api/health-check",
             HttpMethod.GET,
             new HttpEntity<>(headers),
             new ParameterizedTypeReference<>() {

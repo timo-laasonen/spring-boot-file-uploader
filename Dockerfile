@@ -1,17 +1,19 @@
-FROM eclipse-temurin:18-jre-alpine AS builder
-WORKDIR app
-ARG JAR_FILE=target/spring-boot-file-uploader-*.jar
-COPY ${JAR_FILE} app.jar
-RUN java -Djarmode=layertools -jar app.jar extract
+FROM eclipse-temurin:18-jdk-alpine AS builder
+WORKDIR /app
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+RUN ./mvnw install -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
 
 FROM eclipse-temurin:18-jre-alpine
-LABEL org.opencontainers.image.description="omasuuntima backend component"
-WORKDIR app
+LABEL org.opencontainers.image.description="file-uploader backend component"
+VOLUME /tmp
+ARG DEPENDENCY=/app/target/dependency
 RUN addgroup -S spring && adduser -S spring -G spring
-COPY --from=builder app/application/ ./
-COPY --from=builder app/dependencies/ ./
-COPY --from=builder app/spring-boot-loader/ ./
-COPY --from=builder app/snapshot-dependencies/ ./
-RUN chown -R spring:spring .
-USER spring:spring
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=builder ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes /app
+ENTRYPOINT ["java","-cp","app:app/lib/*","fi.fileuploader.FileUploaderApplication"]
