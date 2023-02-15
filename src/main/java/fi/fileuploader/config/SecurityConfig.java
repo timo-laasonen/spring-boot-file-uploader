@@ -42,8 +42,7 @@ public class SecurityConfig {
                 .referrerPolicy(referrer -> referrer.policy(
                         ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER
                     )
-                )
-            );
+                ));
 
         return http.build();
     }

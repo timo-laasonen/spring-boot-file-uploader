@@ -39,7 +39,9 @@ public class KeycloakSecurityConfig {
                 .anyRequest()
                 .authenticated()
             )
-            .oauth2ResourceServer().jwt().jwtAuthenticationConverter(
+            .oauth2ResourceServer()
+            .jwt()
+            .jwtAuthenticationConverter(
                 this.getJwtAuthenticationConverter()
             );
 
