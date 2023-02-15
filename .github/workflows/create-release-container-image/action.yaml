@@ -9,7 +9,7 @@ inputs:
     description: 'Either frontend or backend'
     required: true
   releaseVersion:
-    description: 'Release number, like 3.0.1-alpha'
+    description: 'Release number, like 1.0.1-alpha'
     required: true
 
 outputs:

@@ -1,4 +1,4 @@
-FROM eclipse-temurin:18-jdk-alpine AS builder
+FROM eclipse-temurin:19.0.2_7-jdk-alpine AS builder
 WORKDIR /app
 COPY mvnw .
 COPY lombok.config .
@@ -9,7 +9,7 @@ RUN chmod +x mvnw && ./mvnw install -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 
-FROM eclipse-temurin:18-jre-alpine
+FROM eclipse-temurin:19.0.2_7-jre-alpine
 LABEL org.opencontainers.image.description="file-uploader backend component"
 VOLUME /tmp
 ARG DEPENDENCY=/app/target/dependency

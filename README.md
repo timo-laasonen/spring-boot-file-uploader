@@ -5,7 +5,7 @@ This is project is backend implementation for File Uploader.
 Uses
 
 * Spring Boot 3
-* Java 18
+* Java 19
 * Maven 3.8.x
 * Postgres 14.2
 * Docker
