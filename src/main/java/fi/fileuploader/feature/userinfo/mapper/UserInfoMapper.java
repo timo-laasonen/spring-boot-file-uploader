@@ -16,7 +16,8 @@ public final class UserInfoMapper {
         return UserInfoDTO.builder()
             .id(userInfo.getId())
             .username(userInfo.getUsername())
-            .name(userInfo.getFullName())
+            .firstName(userInfo.getFirstName())
+            .lastName(userInfo.getLastName())
             .build();
     }
 

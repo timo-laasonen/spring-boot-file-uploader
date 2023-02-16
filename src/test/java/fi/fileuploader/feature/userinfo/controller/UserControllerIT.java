@@ -133,13 +133,13 @@ public class UserControllerIT {
             assertThat(page.getPage()).isEqualTo(0);
             assertThat(page.getContent()).hasSize(5);
 
-            assertThat(page.getContent()).extracting(UserInfoDTO::getName)
+            assertThat(page.getContent()).extracting(UserInfoDTO::getLastName)
                 .containsExactlyInAnyOrder(
-                    "Teppo Testi",
-                    "Test User1",
-                    "Test User2",
-                    "Test User3",
-                    "Test User4"
+                    "Testi",
+                    "User1",
+                    "User2",
+                    "User3",
+                    "User4"
                 );
         }
 
@@ -181,10 +181,10 @@ public class UserControllerIT {
             assertThat(page.getPage()).isEqualTo(1);
             assertThat(page.getContent()).hasSize(2);
 
-            assertThat(page.getContent()).extracting(UserInfoDTO::getName)
+            assertThat(page.getContent()).extracting(UserInfoDTO::getLastName)
                 .containsExactlyInAnyOrder(
-                    "Test User5",
-                    "Test User6"
+                    "User5",
+                    "User6"
                 );
         }
     }
