@@ -16,8 +16,9 @@ import java.util.UUID;
 @Jacksonized
 public class UserInfoDTO implements DTO {
 
-    String name;
-
+    String firstName;
+    String lastName;
     String username;
+    String registrationNumber;
     UUID id;
 }
