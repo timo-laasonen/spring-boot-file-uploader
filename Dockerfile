@@ -8,7 +8,6 @@ COPY src src
 RUN chmod +x mvnw && ./mvnw install -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-
 FROM eclipse-temurin:19.0.2_7-jre-alpine
 LABEL org.opencontainers.image.description="file-uploader backend component"
 VOLUME /tmp
