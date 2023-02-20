@@ -59,14 +59,16 @@ Uses
 
 Local Keycloak is used to authenticate request to backend as this Rest API is stateless.
 
-One can start local Keycloak from Docker image by using this comman
+One can start local Keycloak from Docker image by using this command
 
 `docker run -p 8081:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:17.0.1 start-dev`
 
 Following this https://www.baeldung.com/spring-boot-keycloak-integration-testing guide Keycloak can be configured
 
 application.yml contains path to _oauth2 issuer-uri_ which is in local Keycloak based on defined Realm name like
-http://localhost:8180/auth/realms/fileupload-api
+http://localhost:8180/auth/realms/fileupload
+
+client application uses http://localhost:8180/auth as authentication url, _frontend_ as clientId and _fileupload_ as realm name
 
 # Integration test authentication
 

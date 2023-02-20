@@ -35,9 +35,14 @@ public class KeycloakSecurityConfig {
         http.csrf().disable()
             .cors()
             .and()
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/api/health-check").permitAll()
-                .anyRequest()
-                .authenticated()
+            .authorizeHttpRequests(auth ->
+                auth.requestMatchers(
+                        "/api/health-check",
+                        "/api/frontend-config"
+                    )
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
             )
             .oauth2ResourceServer()
             .jwt()
