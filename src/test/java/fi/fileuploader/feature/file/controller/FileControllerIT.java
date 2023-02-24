@@ -175,30 +175,25 @@ public class FileControllerIT {
             },
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(separator = ScriptUtils.EOF_STATEMENT_SEPARATOR))
-        void shouldUpdateUsersWhichAreNotFound() {
+        void shouldUpdateUsersWhichAreFound() {
             final var dataBefore = this.userInfoRepository.findAll();
 
             final String fileContent = "Given name;Family name;Registration number;Email;"
                 + System.getProperty("line.separator")
-                + "Teppo;Testi;123456;teppo@test.fi;"
-                + System.getProperty("line.separator")
-                + "Test;User;44444444;test@test.fi;";
+                + "Teppo;Testaaja;123456;teppo@test.fi;";
 
             final var response = this.importCsvString(fileContent, jwt);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-            final var addedUser = this.userInfoRepository.findAll().stream()
-                .filter(userInfo -> !dataBefore.stream()
-                    .map(UserInfo::getId)
-                    .toList()
-                    .contains(userInfo.getId()))
-                .findFirst();
+            final var existingUsers = this.userInfoRepository.findAll();
+            assertThat(existingUsers).hasSize(dataBefore.size());
 
-            assertThat(addedUser).isPresent();
-            assertThat(addedUser.get().getFirstName()).isEqualTo("Test");
-            assertThat(addedUser.get().getLastName()).isEqualTo("User");
-            assertThat(addedUser.get().getRegistrationNumber())
-                .isEqualTo("44444444");
+            final var existingUser = existingUsers.stream().findFirst();
+            assertThat(existingUser).isPresent();
+            assertThat(existingUser.get().getFirstName()).isEqualTo("Teppo");
+            assertThat(existingUser.get().getLastName()).isEqualTo("Testaaja");
+            assertThat(existingUser.get().getRegistrationNumber())
+                .isEqualTo("123456");
 
         }
 

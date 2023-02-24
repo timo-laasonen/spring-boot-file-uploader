@@ -1,5 +1,6 @@
 package fi.fileuploader.persistence.userinfo;
 
+import fi.fileuploader.feature.auditlog.AuditAware;
 import fi.fileuploader.persistence.UUIDEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "user_info")
-public class UserInfo extends UUIDEntity {
+public class UserInfo extends UUIDEntity implements AuditAware {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;

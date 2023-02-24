@@ -28,20 +28,22 @@ public class UserInfoServiceImpl implements IUserInfoService {
         final String lastName,
         final String email
     ) {
-        final UserInfo userInfo = this.findUserInfoByUsername(
+        return this.findUserInfoByUsername(
                 email
-            )
+            ).map(existingUser -> {
+                existingUser.setFirstName(firstName);
+                existingUser.setLastName(lastName);
+
+                return existingUser;
+            })
             .orElseGet(() -> {
                 final var newUser = new UserInfo();
                 newUser.setUsername(email);
                 newUser.setRegistrationNumber(registrationNumber);
+                newUser.setFirstName(firstName);
+                newUser.setLastName(lastName);
                 return this.userInfoRepository.save(newUser);
             });
-
-        userInfo.setFirstName(firstName);
-        userInfo.setLastName(lastName);
-
-        return userInfo;
     }
 
     @Transactional(readOnly = true)
