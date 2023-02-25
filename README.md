@@ -65,10 +65,12 @@ One can start local Keycloak from Docker image by using this command
 
 Following this https://www.baeldung.com/spring-boot-keycloak-integration-testing guide Keycloak can be configured
 
-application.yml contains path to _oauth2 issuer-uri_ which is in local Keycloak based on defined Realm name like
-http://localhost:8180/auth/realms/fileupload
+In Keycloak _Valid Redirect URIs_ and _Web Origins_ must be set to http://localhost:3000
 
-client application uses http://localhost:8180/auth as authentication url, _frontend_ as clientId and _fileupload_ as realm name
+application.yml contains path to _oauth2 issuer-uri_ which is in local Keycloak based on defined Realm name like
+http://localhost:8081/auth/realms/fileupload
+
+client application uses http://localhost:8081 as authentication url, _frontend_ as clientId and _fileupload_ as realm name
 
 # Integration test authentication
 

@@ -9,6 +9,10 @@ public class FrontEndConfigController implements FrontEndConfigApi {
 
     @Override
     public FrontEndConfigurationDTO frontendConfigurations() {
-        return FrontEndConfigurationDTO.builder().build();
+        return FrontEndConfigurationDTO.builder()
+            .keycloakUrl("http://localhost:8081")
+            .realm("fileupload")
+            .clientId("frontend")
+            .build();
     }
 }
