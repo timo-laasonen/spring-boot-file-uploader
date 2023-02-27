@@ -67,10 +67,10 @@ Following this https://www.baeldung.com/spring-boot-keycloak-integration-testing
 
 In Keycloak _Valid Redirect URIs_ and _Web Origins_ must be set to http://localhost:3000
 
-application.yml contains path to _oauth2 issuer-uri_ which is in local Keycloak based on defined Realm name like
-http://localhost:8081/auth/realms/fileupload
+_application.yml_ list of Keycloak urls which are used for Spring security authentication provider setup and also
+for frontend Keycloak instances to get access tokens.
 
-client application uses http://localhost:8081 as authentication url, _frontend_ as clientId and _fileupload_ as realm name
+For local Keycloak use http://localhost:8081 to access it's admin page.
 
 # Integration test authentication
 

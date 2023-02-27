@@ -20,5 +20,5 @@ file-uploader:
   keycloak:
     enabled: true
     # could be list of keycloak urls
-    urls: http://localhost:8081/realms/fileupload
+    urls: http://localhost:8081/realms/fileupload,http://localhost:8081/realms/fileupload-client
 
