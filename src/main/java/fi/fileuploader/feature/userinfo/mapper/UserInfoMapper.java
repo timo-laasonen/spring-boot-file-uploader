@@ -18,6 +18,7 @@ public final class UserInfoMapper {
             .username(userInfo.getUsername())
             .firstName(userInfo.getFirstName())
             .lastName(userInfo.getLastName())
+            .registrationNumber(userInfo.getRegistrationNumber())
             .build();
     }
 

@@ -7,6 +7,7 @@ import fi.fileuploader.feature.userinfo.mapper.UserInfoMapper;
 import fi.fileuploader.feature.userinfo.service.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,6 +26,7 @@ public class UserController implements UserApi {
         return null;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Override
     public PagedResponseDTO<UserInfoDTO> findUsers(Pageable pageable) {
         return UserInfoMapper.toPagedResponseDTO(

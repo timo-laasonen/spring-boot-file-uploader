@@ -32,5 +32,6 @@ spring:
 file-uploader:
   properties:
     maxFileUploadSize: 512KB
-    keycloak:
-      enabled: true
+  keycloak:
+    enabled: true
+    urls: ""

@@ -14,9 +14,11 @@ spring:
     password: postgres
     url: jdbc:postgresql://localhost:5432/file-uploader
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081/auth/realms/fileupload
+file-uploader:
+  properties:
+    maxFileUploadSize: 512KB
+  keycloak:
+    enabled: true
+    # could be list of keycloak urls
+    urls: http://localhost:8081/realms/fileupload
 
