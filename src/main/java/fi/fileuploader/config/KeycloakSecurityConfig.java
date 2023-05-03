@@ -69,7 +69,11 @@ public class KeycloakSecurityConfig {
             .authorizeHttpRequests(auth ->
                 auth.requestMatchers(
                         "/api/health-check",
-                        "/api/frontend-config"
+                        "/api/frontend-config",
+                        "/api/v3/api-docs/**",
+                        "/api/v3/api-docs.yaml",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
                     )
                     .permitAll()
                     .anyRequest()

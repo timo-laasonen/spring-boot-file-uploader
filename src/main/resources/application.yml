@@ -29,6 +29,9 @@ spring:
   datasource:
     driverClassName: org.postgresql.Driver
 
+springdoc:
+  pathsToMatch: /api/**
+
 file-uploader:
   properties:
     maxFileUploadSize: 512KB

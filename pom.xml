@@ -130,6 +130,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.1.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -350,4 +355,65 @@
         </plugins>
     </reporting>
 
+    <!-- Client code generation -->
+    <profiles>
+        <profile>
+            <id>typescript-axios</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springdoc</groupId>
+                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>openapi-file-generation</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:8080/api/v3/api-docs</apiDocsUrl>
+                            <outputFileName>openapi.json</outputFileName>
+                            <outputDir>${project.basedir}/target</outputDir>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>6.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>typescript-client-code-generation</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/target/openapi.json</inputSpec>
+                                    <output>${project.build.directory}/generated-sources/typescript</output>
+
+                                    <generatorName>typescript-axios</generatorName>
+                                    <!--
+                                        Use this option to dump the configuration help for the specified generator
+                                        instead of generating sources:
+                                        <configHelp>true</configHelp>
+                                    -->
+
+                                    <configOptions>
+                                        <!--
+                                            Put generator-specific parameters here, e.g. for typescript-angular:
+                                            <apiModulePrefix>Backend</apiModulePrefix>
+                                         -->
+                                    </configOptions>
+                                    <!-- run this with "./mvnw clean verify -P typescript-axios" -->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
